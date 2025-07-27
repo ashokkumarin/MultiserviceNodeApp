@@ -2,8 +2,8 @@
 
 # AWS ECS Deployment Script
 # Replace these variables with your actual values
-AWS_REGION="us-east-1"
-AWS_ACCOUNT_ID="YOUR_ACCOUNT_ID"
+AWS_REGION="ap-south-1"
+AWS_ACCOUNT_ID="936723057830"
 ECR_REPOSITORY_PREFIX="multiservice"
 
 # Colors for output
