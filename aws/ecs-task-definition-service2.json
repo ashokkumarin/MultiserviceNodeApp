@@ -1,0 +1,29 @@
+{
+  "family": "service2",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "service2",
+      "image": "YOUR_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com/service2:latest",
+      "portMappings": [
+        {
+          "containerPort": 3002,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/service2",
+          "awslogs-region": "YOUR_REGION",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+} 

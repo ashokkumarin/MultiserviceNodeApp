@@ -1,0 +1,51 @@
+{
+  "api-gateway-service": {
+    "serviceName": "api-gateway-service",
+    "cluster": "multiservice-cluster",
+    "taskDefinition": "api-gateway",
+    "desiredCount": 1,
+    "launchType": "FARGATE",
+    "networkConfiguration": {
+      "awsvpcConfiguration": {
+        "subnets": ["subnet-xxxxxxxxx", "subnet-yyyyyyyyy"],
+        "securityGroups": ["sg-xxxxxxxxx"],
+        "assignPublicIp": "ENABLED"
+      }
+    },
+    "loadBalancers": [
+      {
+        "targetGroupArn": "arn:aws:elasticloadbalancing:region:account:targetgroup/api-gateway-tg/xxxxxxxxx",
+        "containerName": "api-gateway",
+        "containerPort": 3000
+      }
+    ]
+  },
+  "service1-service": {
+    "serviceName": "service1-service",
+    "cluster": "multiservice-cluster",
+    "taskDefinition": "service1",
+    "desiredCount": 1,
+    "launchType": "FARGATE",
+    "networkConfiguration": {
+      "awsvpcConfiguration": {
+        "subnets": ["subnet-xxxxxxxxx", "subnet-yyyyyyyyy"],
+        "securityGroups": ["sg-xxxxxxxxx"],
+        "assignPublicIp": "ENABLED"
+      }
+    }
+  },
+  "service2-service": {
+    "serviceName": "service2-service",
+    "cluster": "multiservice-cluster",
+    "taskDefinition": "service2",
+    "desiredCount": 1,
+    "launchType": "FARGATE",
+    "networkConfiguration": {
+      "awsvpcConfiguration": {
+        "subnets": ["subnet-xxxxxxxxx", "subnet-yyyyyyyyy"],
+        "securityGroups": ["sg-xxxxxxxxx"],
+        "assignPublicIp": "ENABLED"
+      }
+    }
+  }
+} 

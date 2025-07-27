@@ -1,0 +1,191 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Multi-service Node.js Application on ECS'
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC ID where the ECS cluster will be deployed
+  
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Subnet IDs for the ECS services
+
+Resources:
+  # ECS Cluster
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: multiservice-cluster
+      CapacityProviders:
+        - FARGATE
+      DefaultCapacityProviderStrategy:
+        - CapacityProvider: FARGATE
+          Weight: 1
+
+  # Security Group for ECS Services
+  ECSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for ECS services
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3001
+          ToPort: 3001
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3002
+          ToPort: 3002
+          CidrIp: 0.0.0.0/0
+
+  # ECR Repositories
+  ApiGatewayRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: multiservice/api-gateway
+      ImageScanningConfiguration:
+        ScanOnPush: true
+
+  Service1Repository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: multiservice/service1
+      ImageScanningConfiguration:
+        ScanOnPush: true
+
+  Service2Repository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: multiservice/service2
+      ImageScanningConfiguration:
+        ScanOnPush: true
+
+  # CloudWatch Log Groups
+  ApiGatewayLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /ecs/api-gateway
+      RetentionInDays: 7
+
+  Service1LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /ecs/service1
+      RetentionInDays: 7
+
+  Service2LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /ecs/service2
+      RetentionInDays: 7
+
+  # ECS Task Definitions
+  ApiGatewayTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: api-gateway
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: '256'
+      Memory: '512'
+      ExecutionRoleArn: !GetAtt ECSTaskExecutionRole.Arn
+      ContainerDefinitions:
+        - Name: api-gateway
+          Image: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/multiservice/api-gateway:latest'
+          PortMappings:
+            - ContainerPort: 3000
+              Protocol: tcp
+          Essential: true
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref ApiGatewayLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+
+  Service1TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: service1
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: '256'
+      Memory: '512'
+      ExecutionRoleArn: !GetAtt ECSTaskExecutionRole.Arn
+      ContainerDefinitions:
+        - Name: service1
+          Image: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/multiservice/service1:latest'
+          PortMappings:
+            - ContainerPort: 3001
+              Protocol: tcp
+          Essential: true
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref Service1LogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+
+  Service2TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: service2
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: '256'
+      Memory: '512'
+      ExecutionRoleArn: !GetAtt ECSTaskExecutionRole.Arn
+      ContainerDefinitions:
+        - Name: service2
+          Image: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/multiservice/service2:latest'
+          PortMappings:
+            - ContainerPort: 3002
+              Protocol: tcp
+          Essential: true
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref Service2LogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+
+  # IAM Role for ECS Task Execution
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ecsTaskExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+Outputs:
+  ECSClusterName:
+    Description: Name of the ECS Cluster
+    Value: !Ref ECSCluster
+    Export:
+      Name: !Sub '${AWS::StackName}-ECSCluster'
+
+  ApiGatewayRepositoryUri:
+    Description: URI of the API Gateway ECR Repository
+    Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/multiservice/api-gateway'
+
+  Service1RepositoryUri:
+    Description: URI of the Service1 ECR Repository
+    Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/multiservice/service1'
+
+  Service2RepositoryUri:
+    Description: URI of the Service2 ECR Repository
+    Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/multiservice/service2' 
