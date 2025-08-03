@@ -7,7 +7,7 @@ REM This script will deploy your microservices to AWS ECS
 echo 🚀 Starting AWS ECS Deployment...
 
 REM Configuration - UPDATE THESE VALUES
-set AWS_REGION=us-east-1
+set AWS_REGION=ap-south-1
 set ECR_REPOSITORY_PREFIX=multiservice
 
 REM Step 1: Check AWS CLI
