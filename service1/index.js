@@ -8,6 +8,6 @@ app.get('/message1', (req, res) => {
     res.send('Hello from Service 1!');
 });
 
-app.listen(PORT, () => {
-    console.log(`Service 1 listening on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Service 1 listening on http://0.0.0.0:${PORT}`);
 });

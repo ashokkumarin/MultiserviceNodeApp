@@ -49,8 +49,8 @@ app.get('/health', (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`API Gateway listening on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`API Gateway listening on http://0.0.0.0:${PORT}`);
     console.log(`Service1 URL: ${SERVICE1_URL}`);
     console.log(`Service2 URL: ${SERVICE2_URL}`);
 });
