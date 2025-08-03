@@ -5,12 +5,11 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const app = express();
 const PORT = 3000;
 
-// Get service URLs from environment variables (for AWS ECS) or use defaults
-// NOTE: Public IP addresses are hardcoded below for quick testing purposes only.
-// In production, these should be set via environment variables or service discovery.
-// The hardcoded IPs will change when services are redeployed, so this is not a permanent solution.
-const SERVICE1_URL = process.env.SERVICE1_URL || 'http://13.233.32.8:3001';
-const SERVICE2_URL = process.env.SERVICE2_URL || 'http://35.154.157.110:3002';
+// Service discovery using internal IP addresses
+// In AWS ECS, services communicate using internal IP addresses within the VPC
+// This is more reliable than service names for internal communication
+const SERVICE1_URL = process.env.SERVICE1_URL || 'http://172.31.32.189:3001';
+const SERVICE2_URL = process.env.SERVICE2_URL || 'http://172.31.6.75:3002';
 
 console.log('Service1 URL:', SERVICE1_URL);
 console.log('Service2 URL:', SERVICE2_URL);
