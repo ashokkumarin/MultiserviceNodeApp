@@ -38,7 +38,7 @@ aws elbv2 create-target-group ^
   --name api-gateway-tg ^
   --protocol HTTP ^
   --port 3000 ^
-  --vpc-id vpc-0c55e3f78b0b643a6 ^
+  --vpc-id vpc-0b4e329bb2df78153 ^
   --target-type ip ^
   --region %AWS_REGION%
 
@@ -46,7 +46,7 @@ aws elbv2 create-target-group ^
   --name service1-tg ^
   --protocol HTTP ^
   --port 3001 ^
-  --vpc-id vpc-0c55e3f78b0b643a6 ^
+  --vpc-id vpc-0b4e329bb2df78153 ^
   --target-type ip ^
   --region %AWS_REGION%
 
@@ -54,7 +54,7 @@ aws elbv2 create-target-group ^
   --name service2-tg ^
   --protocol HTTP ^
   --port 3002 ^
-  --vpc-id vpc-0c55e3f78b0b643a6 ^
+  --vpc-id vpc-0b4e329bb2df78153 ^
   --target-type ip ^
   --region %AWS_REGION%
 
@@ -167,7 +167,24 @@ echo - ✅ Internal communication between services
 echo - ✅ No hardcoded IPs
 echo - ✅ Proper load balancing
 echo - ✅ More secure architecture
-echo - ✅ Service discovery using service names
+echo - ✅ Service discovery using internal IPs
 echo - ✅ ALB handles external traffic
+echo.
+echo 💰 COST MANAGEMENT REMINDER:
+echo ⚠️  ALB costs ~$16/month + usage charges
+echo ⚠️  ECS Fargate charges for running time
+echo ⚠️  ECR storage charges for Docker images
+echo.
+echo 🧹 CLEANUP WHEN DONE:
+echo Run 'aws\cleanup-all-resources.bat' to DELETE ALL resources
+echo This will avoid ongoing charges when you're done testing!
+echo.
+echo 📊 Estimated monthly cost if left running:
+echo - ALB: ~$16/month
+echo - ECS Fargate (3 services): ~$20-30/month
+echo - ECR storage: ~$1-2/month
+echo - Total: ~$37-48/month if left running 24/7
+echo.
+echo 🎓 Learning tip: Deploy → Test → Cleanup → Repeat!
 
 pause 
