@@ -20,7 +20,7 @@ aws elbv2 create-target-group ^
   --name api-gateway-tg ^
   --protocol HTTP ^
   --port 3000 ^
-  --vpc-id vpc-0c55e3f78b0b643a6 ^
+  --vpc-id vpc-0b4e329bb2df78153 ^
   --target-type ip ^
   --region %AWS_REGION%
 
@@ -29,7 +29,7 @@ aws elbv2 create-target-group ^
   --name service1-tg ^
   --protocol HTTP ^
   --port 3001 ^
-  --vpc-id vpc-0c55e3f78b0b643a6 ^
+  --vpc-id vpc-0b4e329bb2df78153 ^
   --target-type ip ^
   --region %AWS_REGION%
 
@@ -38,7 +38,7 @@ aws elbv2 create-target-group ^
   --name service2-tg ^
   --protocol HTTP ^
   --port 3002 ^
-  --vpc-id vpc-0c55e3f78b0b643a6 ^
+  --vpc-id vpc-0b4e329bb2df78153 ^
   --target-type ip ^
   --region %AWS_REGION%
 
